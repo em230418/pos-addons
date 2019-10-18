@@ -1,5 +1,6 @@
 # Copyright 2018 Artyom Losev
 # Copyright 2018 Kolushov Alexandr <https://it-projects.info/team/KolushovAlexandr>
+# Copyright 2019 Eugene Molotov <https://it-projects.info/team/em230418>
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
 from odoo import api, models
@@ -11,6 +12,10 @@ class ReportSaleDetails(models.AbstractModel):
 
     @api.model
     def get_sale_details(self, date_start=False, date_stop=False, configs=False):
+        # https://github.com/odoo/odoo/blob/239d5d3dca719ba44047545760c788beb2c680b0/addons/point_of_sale/models/pos_order.py#L1144-L1145
+        if not configs:
+            configs = self.env['pos.config'].search([])
+
         res = super(ReportSaleDetails, self).get_sale_details(date_start, date_stop, configs)
 
         payments = self.env['account.payment'].search([
