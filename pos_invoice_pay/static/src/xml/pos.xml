@@ -351,6 +351,7 @@
             
             <div class="pos-center-align"><t t-esc="moment().format('L LT')"/> <t t-esc="order.name"/></div>
             <br />
+            <t t-esc="console.log(order)" />
             <div>Payment of Invoice: <t t-esc="order.invoice_to_pay.number"/>
                 <t t-if='order.invoice_to_pay.origin &amp;&amp; order.invoice_to_pay.origin !== " "'>
                     (<t t-esc="order.invoice_to_pay.origin"/>)
@@ -358,6 +359,10 @@
             </div>
             <br />
 
+            <t t-foreach="order.invoice_to_pay.lines" t-as="line">
+                <p><t t-esc="line.name" /></p>
+            </t>
+            
             <t t-esc="widget.pos.company.name"/><br />
             Phone: <t t-esc="widget.pos.company.phone || ''"/><br />
             User: <t t-esc="widget.pos.cashier ? widget.pos.cashier.name : widget.pos.user.name"/><br />
