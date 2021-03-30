@@ -368,6 +368,33 @@
                 </div>
                 <br />
             </t>
+
+            <!-- based on https://github.com/odoo/odoo/blob/7132a15c38a3b5e5ec232404d21aacfa2ac5874e/addons/point_of_sale/static/src/xml/pos.xml#L1277-L1300 -->
+            <table class='receipt-orderlines'>
+                <colgroup>
+                    <col width='50%' />
+                    <col width='25%' />
+                    <col width='25%' />
+                </colgroup>
+                <tr t-foreach="order.invoice_to_pay.lines" t-as="line">
+                    <td>
+                        <t t-esc="line.product"/>
+                        <t t-if="line.discount > 0">
+                            <div class="pos-disc-font">
+                                With a <t t-esc="line.discount"/>% discount
+                            </div>
+                        </t>
+                    </td>
+                    <td class="pos-right-align">
+                        <t t-esc="line.qty"/>
+                    </td>
+                    <td class="pos-right-align">
+                        <t t-esc="widget.format_currency(line.price_unit)"/>
+                    </td>
+                </tr>
+            </table>
+            <br />
+
             <table class='receipt-total'>
                 <tr>
                     <td>Subtotal:</td>
@@ -474,6 +501,47 @@
                     </t>
                 </div>
                 <br />
+
+                <!-- Orderlines -->
+                <!-- based on https://github.com/odoo/odoo/blob/7132a15c38a3b5e5ec232404d21aacfa2ac5874e/addons/point_of_sale/static/src/xml/pos.xml#L710-L745 -->
+                <div class='orderlines' line-ratio='0.6'>
+                    <t t-foreach='order.invoice_to_pay.lines' t-as='line'>
+                        <t t-set='simple' t-value='line.discount === 0 and line.unit_name === "Unit(s)" and line.qty === 1' />
+                        <t t-if='simple'>
+                            <line>
+                                <left><t t-esc='line.product' /></left>
+                                <right><value t-att-value-decimals='pos.currency.decimals'><t t-esc='line.price_unit' /></value></right>
+                            </line>
+                        </t>
+                        <t t-if='!simple'>
+                            <line><left><t t-esc='line.product' /></left></line>
+                            <t t-if='line.discount !== 0'>
+                                <line indent='1'><left>Discount: <t t-esc='line.discount' />%</left></line>
+                            </t>
+                            <line indent='1'>
+                                <left>
+                                    <value t-att-value-decimals='pos.dp["Product Unit of Measure"]' value-autoint='on'>
+                                        <t t-esc='line.qty' />
+                                    </value>
+                                    <!--
+                                    <t t-if='line.unit_name !== "Unit(s)"'>
+                                        <t t-esc='line.unit_name' />
+                                    </t>
+                                    x
+                                    -->
+                                    <value t-att-value-decimals='pos.dp["Product Price"]'>
+                                        <t t-esc='line.price_unit' />
+                                    </value>
+                                </left>
+                                <right>
+                                    <value t-att-value-decimals='pos.currency.decimals'><t t-esc='line.price_unit' /></value>
+                                </right>
+                            </line>
+                        </t>
+                    </t>
+                </div>
+                <br />
+
                 <div>
                     <line>
                         <left>Subtotal:</left>
